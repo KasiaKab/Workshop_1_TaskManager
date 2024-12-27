@@ -24,15 +24,15 @@ public class TaskManager {
         while (scanner.hasNextLine()) {
             String input = scanner.nextLine();
             switch (input) {
-/*                case "add":
-                    addTask();  // metoda do zrobienia
+                case "add":
+                    addTask();  // metoda utworzona, ale nie zapisuje do pliku
                     break;
-                case "remove":
+/*               case "remove":
                     removeTask();  // metoda do zrobienia
                     break;
  */
                 case "list":
-                    listTask();  // metoda do zrobienia
+                    listTask();  // metoda do sprawdzenia
                     System.out.println(ConsoleColors.GREEN + "File has been loaded successfully.");
                     break;
 /*                case "exit" :
@@ -41,13 +41,48 @@ public class TaskManager {
                     System.exit(0);
                     break;
  */
-                default :
+                default:
                     System.out.println("Please select an option from the following list.");
             }
         }
 
 
     }
+
+    public static void addTask() {
+        Scanner scanner = new Scanner(System.in);
+
+        // Pobieram opis zadania
+        System.out.println(ConsoleColors.PURPLE_UNDERLINED + "Please add task description:" + ConsoleColors.RESET);
+        String taskDescription = scanner.nextLine();
+
+        // Pobieram datę
+        System.out.println(ConsoleColors.PURPLE_UNDERLINED + "Please add task due date in format YYYY-MM-DD:" + ConsoleColors.RESET);
+        String taskDate = scanner.nextLine();
+
+        // Pobieram informację o ważności zadania
+        System.out.println(ConsoleColors.PURPLE_UNDERLINED + "Please provide task importance - true or false:" + ConsoleColors.RESET);
+        String taskImportance = scanner.nextLine();
+
+        // Tworzę nową tablicę o jeden element większą i kopiuję dotychczasowe zadania
+        String[][] newTasks = new String[tasks.length + 1][];
+        for (int i = 0; i < tasks.length; i++) {
+            newTasks[i] = tasks[i];
+
+        }
+        // Dodaję ostatnie zadanie jako ostatni element w tablicy
+        newTasks[tasks.length] = new String[]{taskDescription, taskDate, taskImportance};
+
+        tasks = newTasks;
+
+        System.out.println();
+
+        System.out.println(ConsoleColors.GREEN_BOLD + "Task has been added successfully" + ConsoleColors.RESET);
+
+        scanner.close();
+
+    }
+
     public static void listTask() {
         System.out.println(ConsoleColors.PURPLE_BOLD + "list" + ConsoleColors.RESET);
 
@@ -77,7 +112,7 @@ public class TaskManager {
 
             for (int i = 0; i < fileLines.size(); i++) {
 
-                // Dzielimy linie na części po przecinku i zapisuję do tablicy
+                // Dzielę linie na części po przecinku i zapisuję do tablicy
                 String[] parts = fileLines.get(i).split(",");
                 tasks[i] = parts;
 
@@ -108,5 +143,6 @@ public class TaskManager {
             System.out.println(ConsoleColors.BLACK + (i + 1) + ". " + options[i]);
 
         }
+        System.out.println();
     }
 }
