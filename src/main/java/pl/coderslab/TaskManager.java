@@ -1,5 +1,8 @@
 package pl.coderslab;
 
+import org.apache.commons.lang3.ArrayUtils;
+
+import javax.sound.midi.Soundbank;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,9 +18,12 @@ public class TaskManager {
 
     public static void main(String[] args) {
 
+        System.out.println(ConsoleColors.FOREST_GREEN_BOLD + "Welcome to TaskManager" + ConsoleColors.RESET);
+
+        System.out.println();
+
         loadTasksFromFile(fileName);
         displayMenu();
-
 
         Scanner scanner = new Scanner(System.in);
 
@@ -25,15 +31,24 @@ public class TaskManager {
             String input = scanner.nextLine();
             switch (input) {
                 case "add":
-                    addTask();  // metoda utworzona, ale nie zapisuje do pliku
+                    addTask();
+                    System.out.println(ConsoleColors.GREEN + "New task has been successfully added." + ConsoleColors.RESET);
+                    System.out.println();
                     break;
-/*               case "remove":
-                    removeTask();  // metoda do zrobienia
+                case "remove":
+                    System.out.println(ConsoleColors.PURPLE + "Please select task number to remove:" + ConsoleColors.RESET);
+                    try {
+                        int taskNumber = Integer.parseInt(scanner.nextLine());
+                        removeTask(tasks, taskNumber - 1); // odejmuję 1 od numeru, bo tablica zaczyna się od indeksu 0
+                        System.out.println();
+                    } catch (NumberFormatException e) {
+                        System.out.println(ConsoleColors.RED + "Incorrect argument was selected. Please give number grater than zero!" + ConsoleColors.RESET);
+                    }
                     break;
- */
                 case "list":
-                    listTask();  // metoda do sprawdzenia
-                    System.out.println(ConsoleColors.GREEN + "File has been loaded successfully.");
+                    listTask();
+                    System.out.println(ConsoleColors.GREEN + "File has been successfully loaded.");
+                    System.out.println();
                     break;
 /*                case "exit" :
                     exitTask();  // metoda do zrobienia
@@ -42,10 +57,39 @@ public class TaskManager {
                     break;
  */
                 default:
-                    System.out.println("Please select an option from the following list.");
+                    System.out.println(ConsoleColors.RED +
+                            "Please select an option from the following list. The option you selected '" + input + "' does not exist!" + ConsoleColors.RESET);
             }
+            displayMenu();
         }
 
+    }
+    public static void saveTaskToFile() {    // metoda do zrobienia, użycie 90
+
+    }
+
+    public static void removeTask(String[][] tabel, int number) {
+
+        try {
+            if (number < 0) {
+                System.out.println(ConsoleColors.RED + "List element can not be negative!" + ConsoleColors.RESET);
+                return;
+            }
+
+            if (number >= tasks.length) {
+                System.out.println(ConsoleColors.RED + "Attempting to access a non-existent list element." + ConsoleColors.RESET);
+                return;
+            }
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println(ConsoleColors.RED +
+                    "Please verify that the selected task number exists.\n" +
+                    "Technical details: " + ConsoleColors.RESET + e.getMessage());
+        }
+        tasks = ArrayUtils.remove(tabel, number);
+        System.out.println(ConsoleColors.GREEN + "Task number has been successfully removed." + ConsoleColors.RESET);
+
+//        saveTasksToFile();
 
     }
 
@@ -53,15 +97,15 @@ public class TaskManager {
         Scanner scanner = new Scanner(System.in);
 
         // Pobieram opis zadania
-        System.out.println(ConsoleColors.PURPLE_UNDERLINED + "Please add task description:" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.PURPLE + "Please add task description:" + ConsoleColors.RESET);
         String taskDescription = scanner.nextLine();
 
         // Pobieram datę
-        System.out.println(ConsoleColors.PURPLE_UNDERLINED + "Please add task due date in format YYYY-MM-DD:" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.PURPLE + "Please add task due date in format YYYY-MM-DD:" + ConsoleColors.RESET);
         String taskDate = scanner.nextLine();
 
         // Pobieram informację o ważności zadania
-        System.out.println(ConsoleColors.PURPLE_UNDERLINED + "Please provide task importance - true or false:" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.PURPLE + "Please provide task importance - true or false:" + ConsoleColors.RESET);
         String taskImportance = scanner.nextLine();
 
         // Tworzę nową tablicę o jeden element większą i kopiuję dotychczasowe zadania
@@ -72,24 +116,17 @@ public class TaskManager {
         }
         // Dodaję ostatnie zadanie jako ostatni element w tablicy
         newTasks[tasks.length] = new String[]{taskDescription, taskDate, taskImportance};
-
         tasks = newTasks;
-
-        System.out.println();
-
-        System.out.println(ConsoleColors.GREEN_BOLD + "Task has been added successfully" + ConsoleColors.RESET);
-
-        scanner.close();
 
     }
 
     public static void listTask() {
-        System.out.println(ConsoleColors.PURPLE_BOLD + "list" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.PURPLE + "List of your tasks:" + ConsoleColors.RESET);
 
         for (int i = 0; i < tasks.length; i++) {
-            System.out.println(i + " : ");
+            System.out.print((i + 1) + ": ");
             for (int j = 0; j < tasks[i].length; j++) {
-                System.out.println(tasks[i][j] + " ");
+                System.out.print(tasks[i][j] + " ");
             }
             System.out.println();
 
@@ -119,7 +156,8 @@ public class TaskManager {
             }
 
         } catch (IOException e) {
-            System.out.println("Błąd podczas wczytywania pliku: " + e.getMessage());
+            System.out.println(ConsoleColors.RED + "Error while loading the file.\n" +
+                    "Technical details: " + ConsoleColors.RESET + e.getMessage());
             e.getStackTrace();
 
         }
@@ -130,13 +168,8 @@ public class TaskManager {
         // Definiuję tablicę opcji dostępnych w menu
         String[] options = {"add", "remove", "list", "exit"};
 
-        // Dodaję tytuł programu
-        System.out.println(ConsoleColors.GREEN_BOLD + "Welcome to TaskManager");
-
-        System.out.println();
-
         // Wyświetlam nagłówek
-        System.out.println(ConsoleColors.BLUE_BOLD + "Please select an options: ");
+        System.out.println(ConsoleColors.OCEAN_BLUE_BOLD + "Please select an options: ");
 
         // Iteruję po tablicę, dodając numerację dla lepszej czytelności
         for (int i = 0; i < options.length; i++) {
@@ -145,4 +178,6 @@ public class TaskManager {
         }
         System.out.println();
     }
+
+
 }

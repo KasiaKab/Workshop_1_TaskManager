@@ -17,16 +17,20 @@ public class ConsoleColors {
     public static final String PURPLE = "\033[0;35m";  // PURPLE
     public static final String CYAN = "\033[0;36m";    // CYAN
     public static final String WHITE = "\033[0;37m";   // WHITE
+    public static final String FOREST_GREEN = "\u001B[38;5;29m";  // FOREST GREEN customised
+    public static final String GREEN_ITALIC = "\033[3;32m"; // GREEN ITALIC customised
 
     // Bold
     public static final String BLACK_BOLD = "\033[1;30m";  // BLACK
     public static final String RED_BOLD = "\033[1;31m";    // RED
-    public static final String GREEN_BOLD = "\033[1;32m";  // GREEN
+    public static final String GREEN_BOLD = "\033[1;32m";
     public static final String YELLOW_BOLD = "\033[1;33m"; // YELLOW
     public static final String BLUE_BOLD = "\033[1;34m";   // BLUE
     public static final String PURPLE_BOLD = "\033[1;35m"; // PURPLE
     public static final String CYAN_BOLD = "\033[1;36m";   // CYAN
     public static final String WHITE_BOLD = "\033[1;37m";  // WHITE
+    public static final String FOREST_GREEN_BOLD = "\u001B[1;38;5;29m";  // FOREST GREEN customised
+    public static final String OCEAN_BLUE_BOLD = "\u001B[1;38;5;31m";  // OCEAN BLUE customised
 
     // Underline
     public static final String BLACK_UNDERLINED = "\033[4;30m";  // BLACK
@@ -47,6 +51,7 @@ public class ConsoleColors {
     public static final String PURPLE_BACKGROUND = "\033[45m"; // PURPLE
     public static final String CYAN_BACKGROUND = "\033[46m";   // CYAN
     public static final String WHITE_BACKGROUND = "\033[47m";  // WHITE
+    public static final String SOFT_PINK_BACKGROUND = "\u001B[48;5;218m"; // SOFT PINK customised
 
     // High Intensity
     public static final String BLACK_BRIGHT = "\033[0;90m";  // BLACK
