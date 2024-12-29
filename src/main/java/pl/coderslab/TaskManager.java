@@ -2,11 +2,11 @@ package pl.coderslab;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import javax.sound.midi.Soundbank;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -36,13 +36,25 @@ public class TaskManager {
                     System.out.println();
                     break;
                 case "remove":
-                    System.out.println(ConsoleColors.PURPLE + "Please select task number to remove:" + ConsoleColors.RESET);
-                    try {
-                        int taskNumber = Integer.parseInt(scanner.nextLine());
-                        removeTask(tasks, taskNumber - 1); // odejmuję 1 od numeru, bo tablica zaczyna się od indeksu 0
-                        System.out.println();
-                    } catch (NumberFormatException e) {
-                        System.out.println(ConsoleColors.RED + "Incorrect argument was selected. Please give number grater than zero!" + ConsoleColors.RESET);
+                    boolean validRemove = false;
+                    while (!validRemove) {
+
+                        System.out.println(ConsoleColors.PURPLE + "Please select task number to remove:" + ConsoleColors.RESET);
+                        try {
+                            int taskNumber = Integer.parseInt(scanner.nextLine());
+                            if (taskNumber <= 0) {
+                                System.out.println(ConsoleColors.RED + "List element can not be zero or negative!" + ConsoleColors.RESET);
+                                continue;
+                            }
+                            if (taskNumber > tasks.length) {
+                                System.out.println(ConsoleColors.RED + "Attempting to access a non-existent list element." + ConsoleColors.RESET);
+                                continue;
+                            }
+                            removeTask(tasks, tasks.length - 1);
+                            validRemove = true;
+                        } catch (NumberFormatException e) {
+                            System.out.println(ConsoleColors.RED + "Incorrect argument was selected." + ConsoleColors.RESET);
+                        }
                     }
                     break;
                 case "list":
@@ -50,12 +62,13 @@ public class TaskManager {
                     System.out.println(ConsoleColors.GREEN + "File has been successfully loaded.");
                     System.out.println();
                     break;
-/*                case "exit" :
-                    exitTask();  // metoda do zrobienia
-                    System.out.println(ConsoleColors.PURPLE_BOLD + "Till the next time :)");
+                case "exit":
+                    saveTaskToFile();
+                    System.out.println();
+                    System.out.println(ConsoleColors.PURPLE_BOLD + "Till the next time :)" + ConsoleColors.RESET);
                     System.exit(0);
                     break;
- */
+
                 default:
                     System.out.println(ConsoleColors.RED +
                             "Please select an option from the following list. The option you selected '" + input + "' does not exist!" + ConsoleColors.RESET);
@@ -64,32 +77,37 @@ public class TaskManager {
         }
 
     }
-    public static void saveTaskToFile() {    // metoda do zrobienia, użycie 90
+
+    public static void saveTaskToFile() {
+
+        // Tworzę nowy obiekt Path, który reprezentuję ścieżkę do pliku
+        Path path = Paths.get(fileName);
+
+        // Tworzę nową listę, która będzie przechowywać linie do zapisu
+        ArrayList<String> linesToWrite = new ArrayList<>();
+
+        // Przechodzę po każdym zadaniu w tablicy i zapisuję do listy używając separatora
+        for (String[] task : tasks) {
+            String taskLine = String.join(", ", task);
+            linesToWrite.add(taskLine);
+        }
+
+        try {
+            // Zapisuję wszystkie linie do pliku
+            Files.write(path, linesToWrite);
+
+            System.out.println(ConsoleColors.GREEN + "Your task list has been successfully updated." + ConsoleColors.RESET);
+
+        } catch (IOException e) {
+            System.out.println(ConsoleColors.RED + "Error while saving the file.\n" + "Technical details: " + ConsoleColors.RESET + e.getStackTrace());
+        }
 
     }
 
     public static void removeTask(String[][] tabel, int number) {
 
-        try {
-            if (number < 0) {
-                System.out.println(ConsoleColors.RED + "List element can not be negative!" + ConsoleColors.RESET);
-                return;
-            }
-
-            if (number >= tasks.length) {
-                System.out.println(ConsoleColors.RED + "Attempting to access a non-existent list element." + ConsoleColors.RESET);
-                return;
-            }
-
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println(ConsoleColors.RED +
-                    "Please verify that the selected task number exists.\n" +
-                    "Technical details: " + ConsoleColors.RESET + e.getMessage());
-        }
         tasks = ArrayUtils.remove(tabel, number);
         System.out.println(ConsoleColors.GREEN + "Task number has been successfully removed." + ConsoleColors.RESET);
-
-//        saveTasksToFile();
 
     }
 
@@ -178,6 +196,5 @@ public class TaskManager {
         }
         System.out.println();
     }
-
 
 }
